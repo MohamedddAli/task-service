@@ -1,18 +1,25 @@
-package io.unifonic;
+package io.unifonic.entity;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import io.unifonic.enums.TaskStatus;
 
 import java.time.Instant;
 
 @Entity
-public class Task extends PanacheEntity {
+public class Task {
 
-    // PanacheEntity already provides an 'id' field
+    @Id
+    @GeneratedValue
+    public Long id;
 
     public String title;
     

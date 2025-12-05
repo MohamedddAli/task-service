@@ -1,4 +1,4 @@
-package io.unifonic;
+package io.unifonic.enums;
 
 public enum TaskStatus {
     TODO,
