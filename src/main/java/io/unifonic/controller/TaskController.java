@@ -3,6 +3,7 @@ package io.unifonic.controller;
 import io.unifonic.dto.TaskRequestDTO;
 import io.unifonic.dto.TaskResponseDTO;
 import io.unifonic.service.TaskService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -24,20 +25,23 @@ public class TaskController {
 
     // 1. Create
     @POST
+    @RolesAllowed("user") // Only authenticated users with role USER can access
     @ResponseStatus(201) // change it from default 200(OK) to 201(Created)
     public TaskResponseDTO create(TaskRequestDTO request) {
         // Now you can just return the object directly!
         return service.create(request);
     }
 
-    // 2. Get All
+    // 2. Get All  
     @GET
+    @RolesAllowed("user") // Only authenticated users with role USER can access
     public List<TaskResponseDTO> getAll() {
         return service.getAll();
     }
 
     // 3. Get By ID
     @GET
+    @RolesAllowed("user") // Only authenticated users with role USER can access
     @Path("/{id}")
     public TaskResponseDTO getById(@PathParam("id") Long id) {
         return service.getById(id);
@@ -45,6 +49,7 @@ public class TaskController {
 
     // 4. Update
     @PUT
+    @RolesAllowed("user") // Only authenticated users with role USER can access
     @Path("/{id}")
     public TaskResponseDTO update(@PathParam("id") Long id, TaskRequestDTO request) {
         return service.update(id, request);
@@ -52,6 +57,7 @@ public class TaskController {
 
     // 5. Delete
     @DELETE
+    @RolesAllowed("admin") // Only authenticated users with role ADMIN can access
     @Path("/{id}")
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
