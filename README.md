@@ -45,6 +45,7 @@ Create a Realm:
 Create a Client:
 - Client ID: task-service
 - Enable Standard Flow and Direct Access Grants
+- **Important:** Ensure "Client authentication" is OFF (Public Client)
 
 Create Roles:
 - user
@@ -64,28 +65,51 @@ Roles: user, admin
 Application runs on port 8080  
 Keycloak runs on port 8081
 
-### 1. Get an access token
+### 1. Get User Token (Alice - Role: user)
 curl -X POST http://localhost:8081/realms/task-realm/protocol/openid-connect/token \
   -d "client_id=task-service" \
   -d "username=alice" \
   -d "password=alice" \
   -d "grant_type=password"
 
-Copy the `access_token` from the response.
+*Copy the `access_token` from the response and replace `<TOKEN>` below.*
 
-### 2. Create a task (RabbitMQ event)
+### 2. Create a task (POST)
+*Requires Role: user*
 curl -X POST http://localhost:8080/tasks \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"title": "Docker Setup", "description": "Running in containers", "status": "TODO", "assignee": "Alice"}'
 
-### 3. Complete a task (Kafka event)
+### 3. Get All Tasks (GET)
+*Requires Role: user*
+curl -X GET http://localhost:8080/tasks \
+  -H "Authorization: Bearer <TOKEN>"
+
+### 4. Get Task by ID (GET)
+*Requires Role: user*
+curl -X GET http://localhost:8080/tasks/1 \
+  -H "Authorization: Bearer <TOKEN>"
+
+### 5. Update a task (PUT)
+*Requires Role: user*
 curl -X PUT http://localhost:8080/tasks/1 \
   -H "Authorization: Bearer <TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{"status": "DONE"}'
 
-### 4. Delete a task (admin required)
+### 6. Get Admin Token (Bob - Role: admin)
+*We need Bob's token because only admins can delete.*
+curl -X POST http://localhost:8081/realms/task-realm/protocol/openid-connect/token \
+  -d "client_id=task-service" \
+  -d "username=bob" \
+  -d "password=bob" \
+  -d "grant_type=password"
+
+*Copy the `access_token` and use it as `<BOB_TOKEN>` below.*
+
+### 7. Delete a task (DELETE)
+*Requires Role: admin*
 curl -X DELETE http://localhost:8080/tasks/1 \
   -H "Authorization: Bearer <BOB_TOKEN>"
 
