@@ -72,7 +72,7 @@ curl -X POST http://localhost:8081/realms/task-realm/protocol/openid-connect/tok
   -d "password=alice" \
   -d "grant_type=password"
 
-*Copy the `access_token` from the response and replace `<TOKEN>` below.*
+*Copy the `access_token` from the response and replace `<TOKEN>` in the commands below.*
 
 ### 2. Create a task (POST)
 *Requires Role: user*
