@@ -13,8 +13,8 @@ A robust, event-driven task management REST API built with Quarkus, MySQL, Rabbi
 
 ## Prerequisites
 
-- Java 23
-- Maven
+- Java 23 (Required to compile code locally)
+- Maven (Required to build artifacts)
 - Docker Desktop (with WSL enabled)
 
 Verify installation:
@@ -24,9 +24,11 @@ mvn -version
 ## Running the Application
 
 ### 1. Build the Quarkus application
+**Important:** Since the `target/` folder is ignored by git, you must run this command locally to generate the compiled artifacts. The Dockerfile copies the resulting JARs from this step.
+
 mvn clean package -DskipTests
 
-This produces the build artifacts inside target/quarkus-app.
+This produces the build artifacts inside `target/quarkus-app`.
 
 ### 2. Start the Docker infrastructure
 docker compose up -d --build
@@ -63,18 +65,29 @@ Application runs on port 8080
 Keycloak runs on port 8081
 
 ### 1. Get an access token
-curl -X POST http://localhost:8081/realms/task-realm/protocol/openid-connect/token -d "client_id=task-service" -d "username=alice" -d "password=alice" -d "grant_type=password"
+curl -X POST http://localhost:8081/realms/task-realm/protocol/openid-connect/token \
+  -d "client_id=task-service" \
+  -d "username=alice" \
+  -d "password=alice" \
+  -d "grant_type=password"
 
-Copy the access_token from the response.
+Copy the `access_token` from the response.
 
 ### 2. Create a task (RabbitMQ event)
-curl -X POST http://localhost:8080/tasks -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d '{"title": "Docker Setup", "description": "Running in containers", "status": "TODO", "assignee": "Alice"}'
+curl -X POST http://localhost:8080/tasks \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Docker Setup", "description": "Running in containers", "status": "TODO", "assignee": "Alice"}'
 
 ### 3. Complete a task (Kafka event)
-curl -X PUT http://localhost:8080/tasks/1 -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d '{"status": "DONE"}'
+curl -X PUT http://localhost:8080/tasks/1 \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"status": "DONE"}'
 
 ### 4. Delete a task (admin required)
-curl -X DELETE http://localhost:8080/tasks/1 -H "Authorization: Bearer <BOB_TOKEN>"
+curl -X DELETE http://localhost:8080/tasks/1 \
+  -H "Authorization: Bearer <BOB_TOKEN>"
 
 ## Viewing Logs
 
